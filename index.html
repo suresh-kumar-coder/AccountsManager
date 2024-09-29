@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts Entry</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 class="text-center mb-4">Accounts Entry</h2>
+    <form id="customerForm">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="customerPhone">Customer Phone Number:</label>
+                <input type="tel" class="form-control" id="customerPhone" placeholder="Enter your phone number" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input type="number" class="form-control" id="amount" placeholder="Enter amount" required>
+        </div>
+        <div class="form-group">
+            <label for="tenure">Tenure (Months):</label>
+            <input type="number" class="form-control" id="tenure" placeholder="Enter tenure in months" required>
+        </div>
+        <div class="form-group">
+            <label for="amountPerMonth">Amount per Month:</label>
+            <input type="number" class="form-control" id="amountPerMonth" placeholder="Enter amount per month" required>
+        </div>
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="text" class="form-control" id="date" placeholder="dd-mm-yyyy" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Set default values
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+        const yyyy = today.getFullYear();
+        $('#date').val(`${dd}-${mm}-${yyyy}`); // Set today's date in dd-mm-yyyy format
+
+        $('#tenure').val(4); // Set default tenure to 4 months
+
+        // Automatically calculate the amount per month when the amount is entered
+        $('#amount').on('input', function() {
+            const amount = parseFloat($(this).val());
+            if (!isNaN(amount) && amount > 0) {
+                const amountPerMonth = (amount / 4).toFixed(2); // Calculate amount per month
+                $('#amountPerMonth').val(amountPerMonth); // Set the calculated value
+            } else {
+                $('#amountPerMonth').val(''); // Clear if amount is invalid
+            }
+        });
+
+        $('#customerForm').on('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Gather form data
+            const customerData = {
+                name: $('#customerName').val(),
+                phone: $('#customerPhone').val(),
+                amount: $('#amount').val(),
+                tenure: $('#tenure').val(),
+                amountPerMonth: $('#amountPerMonth').val(),
+                date: $('#date').val().split('-').reverse().join('-'), // Convert dd-mm-yyyy to yyyy-mm-dd for API
+            };
+
+            // Make the API call
+            $.ajax({
+                url: 'https://your-api-endpoint.com/api', // Replace with your API endpoint
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(customerData),
+                success: function(response) {
+                    alert('Data submitted successfully!'); // Handle success
+                },
+                error: function(error) {
+                    alert('An error occurred: ' + error.responseText); // Handle error
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
